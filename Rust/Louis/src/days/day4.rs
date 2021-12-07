@@ -1,9 +1,9 @@
-use adventofcode_lmh01_lib::read_file;
+use adventofcode_lmh01_lib::{get_draw_numbers, read_file};
 
 use std::{collections::HashMap, error::Error};
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let vec = read_file("input.txt")?;
+pub fn part1() -> Result<(), Box<dyn Error>> {
+    let vec = read_file("input/day4.txt")?;
     let mut draw_numbers: Vec<i32> = Vec::new();
     let mut first_line = true;
     let mut current_bingo_numbers: Vec<i32> = Vec::new();
@@ -47,6 +47,59 @@ fn main() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+pub fn part2() -> Result<(), Box<dyn Error>> {
+    let vec = read_file("input/day4.txt")?;
+    let mut draw_numbers: Vec<i32> = Vec::new();
+    let mut first_line = true;
+    let mut current_bingo_numbers: Vec<i32> = Vec::new();
+    let mut bingo_boards: Vec<BingoBoard> = Vec::new();
+    let mut board_number: i32 = 1;
+    for line in vec {
+        if first_line {
+            draw_numbers = get_draw_numbers(&line).unwrap();
+            first_line = false;
+        } else if line.is_empty() {
+            if !current_bingo_numbers.is_empty() {
+                bingo_boards.push(BingoBoard::new(current_bingo_numbers, board_number));
+                current_bingo_numbers = Vec::new();
+                board_number += 1
+            }
+        } else {
+            current_bingo_numbers.append(&mut read_numbers_from_line(&line).unwrap());
+        }
+    }
+    bingo_boards.push(BingoBoard::new(current_bingo_numbers, board_number));
+    //let mut already_won_boards = 0;
+    let bingo_board_amount: i32 = bingo_boards.len().try_into()?;
+    let mut already_won_boards = Vec::new();
+    println!("Bingo boards: {}", bingo_board_amount);
+    'outer: for i in draw_numbers {
+        for board in bingo_boards.iter_mut() {
+            board.add_drawn_number(i);
+            match board.is_winner() {
+                Some(value) => {
+                    if value && !already_won_boards.contains(&board.board_number) {
+                        already_won_boards.push(board.board_number);
+                        let already_won_boards_len: i32 = already_won_boards.len().try_into()?;
+                        if already_won_boards_len > bingo_board_amount - 1 {
+                            println!("Board that wins last: {:?}", board.board_number);
+                            board.print_board();
+                            println!("Last number: {}", i);
+                            println!("Result: {}", i * board.sum_of_unmarked());
+                            break 'outer;
+                        }
+                    }
+                }
+                None => println!(
+                    "Something went wrong while calculating result for board number {}",
+                    board.board_number
+                ),
+            }
+        }
+    }
+    Ok(())
+}
+
 fn read_numbers_from_line(line: &str) -> Option<Vec<i32>> {
     let mut drawn_numbers = Vec::new();
     let mut current_number: String = String::new();
@@ -64,23 +117,6 @@ fn read_numbers_from_line(line: &str) -> Option<Vec<i32>> {
                 last_char_was_space = false;
                 current_number.push(char)
             }
-        }
-    }
-    drawn_numbers.push(current_number.parse::<i32>().unwrap_or(0));
-    Some(drawn_numbers)
-}
-
-/// transforms the string to a vector that contains the numbers that are drawn
-fn get_draw_numbers(line: &str) -> Option<Vec<i32>> {
-    let mut drawn_numbers = Vec::new();
-    let mut current_number: String = String::new();
-    for char in line.chars() {
-        match char {
-            ',' => {
-                drawn_numbers.push(current_number.parse::<i32>().unwrap_or(0));
-                current_number = String::new();
-            }
-            _ => current_number.push(char),
         }
     }
     drawn_numbers.push(current_number.parse::<i32>().unwrap_or(0));

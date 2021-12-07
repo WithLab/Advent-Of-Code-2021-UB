@@ -1,5 +1,5 @@
 [package]
-name = "aoc_2021_day3_part2"
+name = "advent_of_code_2021"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 adventofcode_lmh01_lib = { git = "https://github.com/LMH01/adventofcode_lmh01_lib.git" }
+#adventofcode_lmh01_lib = { path = "../../adventofcode_lmh01_lib" }

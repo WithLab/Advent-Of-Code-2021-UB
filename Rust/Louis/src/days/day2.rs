@@ -1,9 +1,29 @@
-use std::error::Error;
-
 use adventofcode_lmh01_lib::read_file;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let vec = read_file("input.txt")?;
+use std::error::Error;
+
+pub fn part1() -> Result<(), Box<dyn Error>> {
+    let vec = read_file("input/day2.txt")?;
+    let mut horizontal = 0;
+    let mut depth = 0;
+    for line in vec {
+        if line.contains("forward") {
+            horizontal += replace_line(&line, "forward");
+        } else if line.contains("down") {
+            depth += replace_line(&line, "down");
+        } else if line.contains("up") {
+            depth -= replace_line(&line, "up");
+        }
+    }
+    println!("Final horizontal: {}", horizontal);
+    println!("Final depth: {}", depth);
+    println!("Final result: {}", depth * horizontal);
+
+    Ok(())
+}
+
+pub fn part2() -> Result<(), Box<dyn Error>> {
+    let vec = read_file("input/day2.txt")?;
     let mut horizontal = 0;
     let mut depth = 0;
     let mut aim = 0;
