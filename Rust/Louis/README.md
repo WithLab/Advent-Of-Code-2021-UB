@@ -1,5 +1,5 @@
-# Advent of Code 2021
-This repository contains the code that i'm using to complete the tasks given by the [Advent of Code 2021](https://adventofcode.com/2021/) event.
+## Louis
+This folder contains all my solves for the [advent of code 2021](https://adventofcode.com/2021/) event.
 
 ## Usage
 If you would like to run all my tasks at once just use `cargo run --release -- -a`. Just know that some tasks might take a while to complete. To exclude these use `cargo run --release`.\
