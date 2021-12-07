@@ -1,8 +1,9 @@
 use adventofcode_lmh01_lib::read_file;
+use miette::{IntoDiagnostic, Result};
 
-use std::{cmp::Ordering, error::Error};
+use std::cmp::Ordering;
 
-pub fn part1() -> Result<(), Box<dyn Error>> {
+pub fn part1(debug: bool) -> Result<()> {
     let vec = read_file("input/day5.txt")?;
     let mut lines: Vec<Line> = Vec::new();
     let mut board = Board::new();
@@ -19,30 +20,32 @@ pub fn part1() -> Result<(), Box<dyn Error>> {
                 p2 = (a, b);
             }
         }
-        println!(
-            "Setting line active: ({}, {}) - ({}, {})",
-            p1.1, p1.0, p2.1, p2.0
-        );
+        if debug {
+            println!(
+                "Setting line active: ({}, {}) - ({}, {})",
+                p1.1, p1.0, p2.1, p2.0
+            );
+        }
         board.set_line_active(
-            p1.1.parse()?,
-            p1.0.parse()?,
-            p2.1.parse()?,
-            p2.0.parse()?,
+            p1.1.parse().into_diagnostic()?,
+            p1.0.parse().into_diagnostic()?,
+            p2.1.parse().into_diagnostic()?,
+            p2.0.parse().into_diagnostic()?,
             false,
         );
         lines.push(Line {
-            x1: p1.1.parse()?,
-            y1: p1.0.parse()?,
-            x2: p2.1.parse()?,
-            y2: p2.0.parse()?,
+            x1: p1.1.parse().into_diagnostic()?,
+            y1: p1.0.parse().into_diagnostic()?,
+            x2: p2.1.parse().into_diagnostic()?,
+            y2: p2.0.parse().into_diagnostic()?,
         });
     }
-
-    for line in lines {
-        println!("({}, {}), ({}, {})", line.y1, line.x1, line.y2, line.x2);
+    if debug {
+        for line in lines {
+            println!("({}, {}), ({}, {})", line.y1, line.x1, line.y2, line.x2);
+        }
+        board.print_board();
     }
-
-    //board.print_board();
     println!(
         "Number of overlapping points: {}",
         board.overlapping_points()
@@ -50,7 +53,7 @@ pub fn part1() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn part2() -> Result<(), Box<dyn Error>> {
+pub fn part2(debug: bool) -> Result<()> {
     let vec = read_file("input/day5.txt")?;
     let mut lines: Vec<Line> = Vec::new();
     let mut board = Board::new();
@@ -67,30 +70,33 @@ pub fn part2() -> Result<(), Box<dyn Error>> {
                 p2 = (a, b);
             }
         }
-        println!(
-            "Setting line active: ({}, {}) - ({}, {})",
-            p1.1, p1.0, p2.1, p2.0
-        );
+        if debug {
+            println!(
+                "Setting line active: ({}, {}) - ({}, {})",
+                p1.1, p1.0, p2.1, p2.0
+            );
+        }
         board.set_line_active(
-            p1.1.parse()?,
-            p1.0.parse()?,
-            p2.1.parse()?,
-            p2.0.parse()?,
-            true,
+            p1.1.parse().into_diagnostic()?,
+            p1.0.parse().into_diagnostic()?,
+            p2.1.parse().into_diagnostic()?,
+            p2.0.parse().into_diagnostic()?,
+            false,
         );
         lines.push(Line {
-            x1: p1.1.parse()?,
-            y1: p1.0.parse()?,
-            x2: p2.1.parse()?,
-            y2: p2.0.parse()?,
+            x1: p1.1.parse().into_diagnostic()?,
+            y1: p1.0.parse().into_diagnostic()?,
+            x2: p2.1.parse().into_diagnostic()?,
+            y2: p2.0.parse().into_diagnostic()?,
         });
     }
 
-    for line in lines {
-        println!("({}, {}), ({}, {})", line.y1, line.x1, line.y2, line.x2);
+    if debug {
+        for line in lines {
+            println!("({}, {}), ({}, {})", line.y1, line.x1, line.y2, line.x2);
+        }
+        board.print_board();
     }
-
-    //board.print_board();
     println!(
         "Number of overlapping points: {}",
         board.overlapping_points()
@@ -202,13 +208,12 @@ impl Board {
     fn set_point_active(&mut self, x: i32, y: i32) {
         for point in &mut self.points {
             if point.x == x && point.y == y {
-                //println!("Increased number of lines for point ({}, {})", x, y);
                 point.number_of_lines += 1;
             }
         }
     }
 
-    fn _print_board(&self) {
+    fn print_board(&self) {
         for x in 0..=1000 {
             for y in 0..=1000 {
                 for point in &self.points {

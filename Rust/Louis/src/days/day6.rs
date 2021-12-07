@@ -1,8 +1,9 @@
 use adventofcode_lmh01_lib::{get_draw_numbers, read_file};
+use miette::Result;
 
-use std::{cmp::Ordering, error::Error};
+use std::cmp::Ordering;
 
-pub fn part1() -> Result<(), Box<dyn Error>> {
+pub fn part1(debug: bool) -> Result<()> {
     let vec = read_file("input/day6.txt")?;
     let mut fish = get_draw_numbers::<u8>(vec.get(0).unwrap_or(&String::from("")))?;
     for i in 1..=80 {
@@ -23,13 +24,15 @@ pub fn part1() -> Result<(), Box<dyn Error>> {
         for _i in 1..=fish_to_add {
             fish.push(8);
         }
-        println!("[Day {:2.0}] Current fish: {:?}", i, fish.len());
+        if debug {
+            println!("[Day {:2.0}] Current fish: {:?}", i, fish.len());
+        }
     }
     println!("Fish total: {}", fish.len());
     Ok(())
 }
 
-pub fn part2() -> Result<(), Box<dyn Error>> {
+pub fn part2(_debug: bool) -> Result<()> {
     let vec = read_file("input/day6.txt")?;
     let fish = get_draw_numbers::<u8>(vec.get(0).unwrap_or(&String::from("")))?;
     let mut ages: Ages = Ages {
